@@ -1,0 +1,52 @@
+project(app
+    VERSION 0.0.1
+    LANGUAGES CXX)
+
+# add CMAKE_AUTOMOC, CMAKE_AUTORCC, CMAKE_AUTOUIC
+AUTO_BUILD_RESOURCES_QT5()
+
+INCLUDE_SOURCES(${PROJECT_NAME})
+
+set(QT_COMPONENTS
+    Core Widgets
+    QuickWidgets
+    Core
+    QuickControls2
+    Sql
+)
+
+add_executable(${PROJECT_NAME}
+    ${HEADERS}
+    ${SOURCES}
+    ${RESOURCES})
+
+set_target_properties(
+    ${PROJECT_NAME}
+    PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/install-root)
+
+file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/install-root/translations)
+
+TS_TO_QM(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/translations ${CMAKE_BINARY_DIR}/install-root/translations)
+
+FIND_AND_LINK_QT(
+    TARGET
+    ${PROJECT_NAME}
+    QT_COMPONENTS
+    ${QT_COMPONENTS})
+
+target_include_directories(
+        ${PROJECT_NAME}
+        PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+
+target_link_libraries(${PROJECT_NAME}
+        PRIVATE
+        ${PROJECT_NAMESPACE}::core
+        # ${PROJECT_NAMESPACE}::logic_plugin
+        ${PROJECT_NAMESPACE}::gui_plugin
+        compilation_flags
+)
+
+SET_BASE_TARGET_PROPERTIES(${PROJECT_NAME})
